@@ -42,7 +42,16 @@ class TestNetwork(unittest.TestCase):
         self.assertEqual(parameters["bias1"].shape,(2,1))
         self.assertEqual(parameters["bias2"].shape,(1,1))
         
-        
+    def test_GetParamtersOfDeeperNetwork(self):
+        network=Network()
+        parameters=network.InitializeNetwork([2,8,2,6,1])
+        self.assertEqual(len(parameters.keys()),8)
+        self.assertEqual(parameters["Weights1"].shape,(8,2))
+        self.assertEqual(parameters["Weights2"].shape,(2,8))
+        self.assertEqual(parameters["Weights3"].shape,(6,2))
+        self.assertEqual(parameters["Weights4"].shape,(1,6))
+        self.assertEqual(parameters["bias1"].shape,(8,1))
+        self.assertEqual(parameters["bias2"].shape,(2,1))
     
     
     
