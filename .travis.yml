@@ -1,6 +1,13 @@
+sudo: false
 language: python
 python:
   - "3.8"
 install:
   - pip3 install -r requirements.txt
-script: python3 DeepNetworkTests.py || python DeepNetworkTests.py
+  - pip3 install codecov
+script:
+  - python3 DeepNetworkTests.py
+  - coverage run DeepNetworkTests.py
+
+after_success:
+  -codecov
