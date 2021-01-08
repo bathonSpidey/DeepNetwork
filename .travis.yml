@@ -10,4 +10,4 @@ script:
   - coverage run DeepNetworkTests.py
 
 after_success:
-  -codecov
+  - bash <(curl https://codecov.io/bash)
