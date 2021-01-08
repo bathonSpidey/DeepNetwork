@@ -16,9 +16,19 @@ class Network:
         activatedResult= 1/(1+np.exp(-linearResult))
         return activatedResult
     
+    def sigmoidDifferential(self,activatedGradient,linearResult ):
+        sigmoid= 1/(1+np.exp(-linearResult))
+        linearGradient=activatedGradient*sigmoid*(1-sigmoid)
+        return linearGradient
+    
     def relu(self, linearResult):
         activatedResult = np.maximum(0,linearResult)
         return activatedResult
+    
+    def reluDifferential(self,activatedGradient, linearResult):
+        linearGradient=np.array(activatedGradient, copy=True)
+        linearGradient[linearResult <= 0] = 0
+        return linearGradient
     
     def InitializeNetwork(self, layerDimensions):
         parameters={}
@@ -65,6 +75,38 @@ class Network:
         caches.append(cache)
         
         return lastLayerActivation,caches
+    
+    def ComputeCost(self, finalActivation, targetSet):
+        totalEntries=targetSet.shape[1]
+        logProduct=np.dot(targetSet, np.log(finalActivation).T) + np.dot((1-targetSet),
+                                                                         np.log(1-finalActivation).T)
+        cost=-(1/totalEntries)*np.sum(logProduct)
+        cost = np.squeeze(cost)
+        return cost
+        
+    def LinearBackward(self, linearGradient,cache):
+        previousActivation, weights, bias= cache
+        totalEntries=previousActivation.shape[1]
+        weightsGradient=(1/totalEntries)*np.dot(linearGradient,previousActivation.T)
+        biasGradient=(1/totalEntries)*np.sum(linearGradient,axis=1,keepdims=True)
+        previousActivationGradient=np.dot(weights.T,linearGradient)
+        return previousActivationGradient, weightsGradient, biasGradient
+    
+    def LinearBackwardActivation(self,activatedGradient,cache,activation):
+        linearCache,linearResult=cache
+        if activation=="relu":
+            linearGradient=self.reluDifferential(activatedGradient,linearResult)
+        elif activation=="sigmoid":
+            linearGradient=self.sigmoidDifferential(activatedGradient,linearResult)
+        previousActivationGradient,weightsGradient,biasGradient=\
+            self.LinearBackward(linearGradient,linearCache)
+        return previousActivationGradient,weightsGradient,biasGradient
+    
+    def BackPropagate(self, finalActivation,targetSet,caches):
+       grads = {}
+       return grads
+        
+    
     
         
             

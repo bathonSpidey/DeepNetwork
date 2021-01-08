@@ -13,7 +13,7 @@ class TestNetwork(unittest.TestCase):
     def setUp(self):
         self.dataset=np.array([(0,0),(0,1),(1,0),(1,1)])
         self.testDataset=self.dataset
-        self.targetSet=np.array([1,0,0,1])
+        self.targetSet=np.array([(1,0,0,1)])
         self.network=DeepNetwork.Network()
     
     def test_InitilaizeNetworkWithInvalidInput(self):
@@ -74,6 +74,15 @@ class TestNetwork(unittest.TestCase):
                                                                   parameters)
         self.assertEqual(parameters["Weights"+str(len(parameters) // 2)].shape,(1,2))
         self.assertEqual(finalLayerActivation.shape,(1,4))
+        return finalLayerActivation
+    
+    def test_costFinalLayer(self):
+        activation=self.test_activatedResultForDeepNetwork()
+        cost=self.network.ComputeCost(activation,self.targetSet)
+        self.assertEqual(cost.shape,())
+        
+    
+        
         
 if __name__ == '__main__':
     unittest.main()
