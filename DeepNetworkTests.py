@@ -12,10 +12,11 @@ class TestNetwork(unittest.TestCase):
 
     def setUp(self):
         self.dataset=np.array([(0,0),(0,1),(1,0),(1,1)])
-        self.testDataset=self.dataset
         self.targetSet=np.array([(1,0,0,1)])
+        self.testTargets=np.copy(self.targetSet)
         self.network=DeepNetwork.Network()
         self.trainData=self.network.dataReshape(self.dataset)
+        self.testData=np.copy(self.trainData)
     
     def test_InitilaizeNetworkWithInvalidInput(self):
         with self.assertRaises(Exception):self.network.InitializeNetwork("1,2,4,3")
@@ -116,7 +117,7 @@ class TestNetwork(unittest.TestCase):
         self.assertTrue((updatedParams["bias1"]!=oldParams["bias1"]).all())
         self.assertTrue((updatedParams["Weights1"]!=oldParams["Weights1"]).all())
         
-    def test_oneiterationOfDeepNetwork(self):
+    def test_oneIterationOfDeepNetwork(self):
         parameters=self.network.InitializeNetwork([2,2,1])
         lastLayerActivation, caches=self.network.ForwardPropagate(self.trainData,
                                                                   parameters)
@@ -124,6 +125,12 @@ class TestNetwork(unittest.TestCase):
                                              self.targetSet,caches)
         updatedParams=self.network.UpdateWeights(parameters,gradients,10)
         self.assertEqual(len(updatedParams),4)
+        return updatedParams
+    
+    def test_predict(self):
+        params=self.test_oneIterationOfDeepNetwork()
+        predictions=self.network.Predict(self.testData,self.targetSet,params)
+        self.assertTrue((params!=predictions).all())
         
 if __name__ == '__main__':
     unittest.main()

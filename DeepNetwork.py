@@ -132,6 +132,19 @@ class Network:
                 learningRate*gradients["BiasGradient" + str(layer + 1)]
         return parameters
     
+    def Predict(self,data, target, parameters):
+        totalSamples=data.shape[1]
+        predictions=np.zeros((1,totalSamples))
+        probabilities,caches=self.ForwardPropagate(data,parameters)
+        
+        for i in range(0, probabilities.shape[1]):
+            if probabilities[0,i]>.5:
+                predictions[0,i]=1
+            else:
+                predictions[0,i]=0
+        print("Accuracy: "  + str(np.sum((predictions == target)/totalSamples)))
+        return predictions
+    
         
     
     
