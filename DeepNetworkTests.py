@@ -117,10 +117,5 @@ class TestNetwork(unittest.TestCase):
         self.assertTrue((updatedParams["Weights1"]!=oldParams["Weights1"]).all())
         
         
-        
-        
-    
-        
-        
 if __name__ == '__main__':
     unittest.main()
