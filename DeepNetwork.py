@@ -116,7 +116,7 @@ class Network:
        for layer in reversed(range(totalLayers-1)):
            currentCache=caches[layer]
            previousActivatedGradient, weightsGradient,biasGradient= \
-               self.LinearBackwardActivation(gradients["ActivatedGradient"]+str(layer+1),
+               self.LinearBackwardActivation(gradients["ActivatedGradient"+str(layer+1)],
                                              currentCache,"relu")
            gradients["ActivatedGradient" + str(layer)] = previousActivatedGradient
            gradients["WeightsGradient" + str(layer + 1)] = weightsGradient
@@ -131,6 +131,7 @@ class Network:
             parameters["bias" + str(layer+1)] = parameters["bias" + str(layer+1)]-\
                 learningRate*gradients["BiasGradient" + str(layer + 1)]
         return parameters
+    
         
     
     

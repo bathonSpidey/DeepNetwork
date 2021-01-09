@@ -116,6 +116,14 @@ class TestNetwork(unittest.TestCase):
         self.assertTrue((updatedParams["bias1"]!=oldParams["bias1"]).all())
         self.assertTrue((updatedParams["Weights1"]!=oldParams["Weights1"]).all())
         
+    def test_oneiterationOfDeepNetwork(self):
+        parameters=self.network.InitializeNetwork([2,2,1])
+        lastLayerActivation, caches=self.network.ForwardPropagate(self.trainData,
+                                                                  parameters)
+        gradients=self.network.BackPropagate(lastLayerActivation,
+                                             self.targetSet,caches)
+        updatedParams=self.network.UpdateWeights(parameters,gradients,10)
+        self.assertEqual(len(updatedParams),4)
         
 if __name__ == '__main__':
     unittest.main()
