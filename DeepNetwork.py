@@ -60,20 +60,17 @@ class Network:
         caches = []
         activatedResult = trainData
         totalLayers=len(parameters) // 2
-        for layer in range(1,totalLayers):
+        function="relu"
+        for layer in range(1,totalLayers+1):
             previousActivation=activatedResult
+            if layer==totalLayers:
+                function="sigmoid"
             activatedResult,cache=self.ActivateLinearResult(previousActivation,
                                                       parameters['Weights'+str(layer)],
                                                       parameters['bias'+str(layer)], 
-                                                      "relu")
+                                                      function)
             caches.append(cache)
-        lastLayerActivation,cache=self.ActivateLinearResult(activatedResult,
-                                                            parameters['Weights'
-                                                                       +str(totalLayers)],
-                                                            parameters['bias'+str(totalLayers)],
-                                                            "sigmoid")
-        caches.append(cache)
-        
+        lastLayerActivation=activatedResult
         return lastLayerActivation,caches
     
     def ComputeCost(self, finalActivation, targetSet):
