@@ -124,11 +124,11 @@ class Network:
         totalLayer= len(parameters)//2
         update=["Weights", "WeightsGradient","bias","BiasGradient"]
         for layer in range(totalLayer):
-            parameters[update[0] + str(layer+1)] = parameters[update[0] + str(layer+1)]\
-                -learningRate*gradients[update[1] + str(layer + 1)]
+            parameters[update[0] + str(layer+1)] =- learningRate*gradients[update[1] + str(layer + 1)]
             parameters[update[2] + str(layer+1)] = parameters[update[2] + str(layer+1)]-\
                 learningRate*gradients[update[3] + str(layer + 1)]
         return parameters
+    
     
     def Predict(self,data, target, parameters):
         totalSamples=data.shape[1]
