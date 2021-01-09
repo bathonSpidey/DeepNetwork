@@ -84,8 +84,8 @@ class Network:
         cost = np.squeeze(cost)
         return cost
         
-    def LinearBackward(self, linearGradient,cache):
-        previousActivation, weights, bias= cache
+    def LinearBackward(self, linearGradient,linearCache):
+        previousActivation, weights, bias= linearCache
         totalEntries=previousActivation.shape[1]
         weightsGradient=(1/totalEntries)*np.dot(linearGradient,previousActivation.T)
         biasGradient=(1/totalEntries)*np.sum(linearGradient,axis=1,keepdims=True)
@@ -100,11 +100,37 @@ class Network:
             linearGradient=self.sigmoidDifferential(activatedGradient,linearResult)
         previousActivationGradient,weightsGradient,biasGradient=\
             self.LinearBackward(linearGradient,linearCache)
-        return previousActivationGradient,weightsGradient,biasGradient
+        return previousActivationGradient,weightsGradient,biasGradient 
     
-    def BackPropagate(self, finalActivation,targetSet,caches):
-       grads = {}
-       return grads
+    def BackPropagate(self, lastLayerActivation,targetSet,caches):
+       gradients = {}
+       totalLayers= len(caches)
+       totalSamples=lastLayerActivation.shape[1]
+       targetSet.reshape(lastLayerActivation.shape)
+       lastLayerActivatedGradient=- (1/totalSamples)*(np.divide(targetSet, lastLayerActivation) \
+                                  - np.divide(1 - targetSet, 1 - lastLayerActivation))
+       currentCache=caches[totalLayers-1]
+       gradients["ActivatedGradient"+str(totalLayers-1)], gradients["WeightsGradient" + str(totalLayers)],\
+           gradients["BiasGradient" + str(totalLayers)] = \
+               self.LinearBackwardActivation(lastLayerActivatedGradient, currentCache, "sigmoid")
+       for layer in reversed(range(totalLayers-1)):
+           currentCache=caches[layer]
+           previousActivatedGradient, weightsGradient,biasGradient= \
+               self.LinearBackwardActivation(gradients["ActivatedGradient"]+str(layer+1),
+                                             currentCache,"relu")
+           gradients["ActivatedGradient" + str(layer)] = previousActivatedGradient
+           gradients["WeightsGradient" + str(layer + 1)] = weightsGradient
+           gradients["BiasGradient" + str(layer + 1)] = biasGradient
+       return gradients
+   
+    def UpdateWeights(self, parameters,gradients,learningRate=0.1):
+        totalLayer= len(parameters)//2
+        for layer in range(totalLayer):
+            parameters["Weights" + str(layer+1)] = parameters["Weights" + str(layer+1)]\
+                -learningRate*gradients["WeightsGradient" + str(layer + 1)]
+            parameters["bias" + str(layer+1)] = parameters["bias" + str(layer+1)]-\
+                learningRate*gradients["BiasGradient" + str(layer + 1)]
+        return parameters
         
     
     
